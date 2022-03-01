@@ -1,0 +1,42 @@
+.button {
+  display: block;
+  width: 15%;
+  margin: 0.75rem auto;
+  text-transform: uppercase;
+  padding: 0.5rem 0;
+  font-size: 1.125rem;
+  border: none;
+  color: var(--btn-bet-text);
+  font-weight: bold;
+}
+
+.button:nth-of-type(1) {
+  background: var(--btn-1usd);
+}
+
+.button:nth-of-type(2) {
+  background: var(--btn-5usd);
+}
+
+.button:nth-of-type(3) {
+  background: var(--btn-20usd);
+}
+
+.button:nth-of-type(4) {
+  background: var(--btn-50usd);
+}
+
+.button:nth-of-type(5) {
+  background: var(--btn-100usd);
+}
+
+.button:hover {
+  transform: scale(1.04);
+  cursor: pointer;
+}
+
+.button:disabled {
+  background: var(--btn-disabled);
+  cursor: not-allowed;
+  opacity: 0.7;
+}

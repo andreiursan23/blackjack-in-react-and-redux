@@ -1,0 +1,5 @@
+.container {
+  display: flex;
+  border-bottom: var(--box-border) 3px solid;
+  height: 5.3125rem;
+}

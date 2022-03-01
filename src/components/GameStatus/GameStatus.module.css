@@ -1,0 +1,17 @@
+.container {
+  min-height: 8.065rem;
+  border-bottom: var(--box-border) 3px solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message {
+  font-size: 1.6875rem;
+  text-align: center;
+  padding: 1rem;
+  color: var(--text);
+  font-weight: 500;
+  padding-left: 1rem;
+  line-height: 1.1;
+}
