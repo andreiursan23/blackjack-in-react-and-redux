@@ -48,13 +48,9 @@ export const changeAceValue = (cards) => {
 };
 
 export const calcCardsSum = (cards) => {
-  let sum = 0;
-
-  cards.forEach((card) => {
-    sum += card;
+  cards.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
   });
-
-  return sum;
 };
 
 export const evaluateGameState = (cardsSum) => {
