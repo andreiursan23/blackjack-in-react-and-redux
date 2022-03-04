@@ -21,17 +21,11 @@ export const newCardPhase = (
   let playerCards = [...inputPlayerCards];
   let dealerCards = [...inputDealerCards];
 
-  console.log(playerCards);
-  console.log(dealerCards);
-
   const newCardPlayer = generateRandomCard();
   playerCards.push(newCardPlayer);
   playerSum = calcCardsSum(playerCards);
 
-  if (playerSum < 21) {
-    // Steps when neither side has blackjack
-    gameNotDecided(dispatch, gameLogicActions);
-  } else if (playerSum === 21) {
+  if (playerSum === 21) {
     dealerGameWhenPlayerHasBlackjack(
       dealerSum,
       dealerCards,
@@ -47,8 +41,8 @@ export const newCardPhase = (
       endGamePlayerWon,
       changeAceValue
     );
+  } else if (playerSum > 21) {
     // Case below: player cards sum is more than 21
-  } else {
     if (wasPlayerAceChangeDone) {
       // Player lost steps to be added here
       endGamePlayerLost(dispatch, gameLogicActions, playerChips, currentStake);
@@ -60,8 +54,19 @@ export const newCardPhase = (
         playerSum = calcCardsSum(playerCards);
         wasPlayerAceChangeDone = true;
 
-        // Steps when neither side has blackjack
-        gameNotDecided(dispatch, gameLogicActions);
+        // Check if player now has blackjack
+        if (playerSum === 21) {
+          endGamePlayerWon(
+            dispatch,
+            gameLogicActions,
+            playerChips,
+            currentStake
+          );
+        } else {
+          // Steps when neither side has blackjack
+          gameNotDecided(dispatch, gameLogicActions);
+        }
+
         // Case below: player does not have ace in hand and player cards sum is more than 21
       } else {
         // Player lost steps to be added here
@@ -73,6 +78,9 @@ export const newCardPhase = (
         );
       }
     }
+  } else {
+    // Steps when neither side has blackjack
+    gameNotDecided(dispatch, gameLogicActions);
   }
 
   // Save all needed values to Redux store

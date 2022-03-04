@@ -14,15 +14,11 @@ const initialState = {
     cards: [],
     sum: null,
     chips: 1000,
-    isAlive: true,
-    hasWon: false,
     wasAceChangeDone: false,
   },
   dealer: {
     cards: [],
     sum: null,
-    isAlive: true,
-    hasWon: false,
     wasAceChangeDone: false,
   },
 };
