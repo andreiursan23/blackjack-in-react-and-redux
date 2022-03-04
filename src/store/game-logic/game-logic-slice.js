@@ -71,8 +71,11 @@ const gameLogicSlice = createSlice({
     // Player reducers
     updatePlayerCards(state, action) {
       if (!action.payload) {
+        // to initialize new game
         state.player.cards = [];
       } else {
+        // to update cards during game
+        state.player.cards = [];
         action.payload.forEach((card) => {
           state.player.cards.push(card);
         });
@@ -107,8 +110,11 @@ const gameLogicSlice = createSlice({
     // Dealer reducers
     updateDealerCards(state, action) {
       if (!action.payload) {
+        // to initialize new game
         state.dealer.cards = [];
       } else {
+        // to update cards during game
+        state.dealer.cards = [];
         action.payload.forEach((card) => {
           state.dealer.cards.push(card);
         });

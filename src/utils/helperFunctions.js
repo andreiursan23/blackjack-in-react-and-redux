@@ -1,30 +1,4 @@
-/*
-
-Functions that need to become helper functions:
-
-1. generateRandomCard - done
-2. changeAceValue  - done
-3. updateCardsSum - replaced by useState
-4. calcCardsSum - done
-5. renderGame: - might not be needed
-  5.1 calcCardsSum
-  5.2 changeAceValue
-  5.3 updateCardsSum
-6. dealerGame:
-  6.1 generateRandomCard
-  6.2 calcCardsSum
-  6.3 changeAceValue
-  6.4 updateCardsSum
-7. evaluateGameState - done
-8. evaluateGameBlackjack - done
-9. evaluateGameWon - done
-10. updatePlayerChips - done
-11. endGameSteps
-  11.1 renderGame
-  11.2 establishPrizeWinner
-
-*/
-
+// General helper functions
 export const generateRandomCard = () => {
   const cardNumber = Math.floor(Math.random() * 13) + 1;
 
@@ -90,5 +64,109 @@ export const updatePlayerChips = (roundResult, playerChips, currentStake) => {
     return playerChips + 2 * currentStake;
   } else {
     return playerChips;
+  }
+};
+
+export const trackAceValueChangeWhenBothCardsAreAces = (card1, card2) => {
+  if (card1 === 11 && card2 === 11) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const endGamePlayerWon = (
+  dispatch,
+  gameLogicActions,
+  playerChips,
+  currentStake
+) => {
+  dispatch(gameLogicActions.changeGamesStatus("player_won_blackjack"));
+  dispatch(gameLogicActions.changeGamesPhase("betting"));
+  dispatch(gameLogicActions.updateBtnAvailability([true, true, true]));
+  dispatch(gameLogicActions.updatePlayerChips(playerChips + 2 * currentStake));
+  dispatch(gameLogicActions.changeCurrentStake(null));
+};
+
+export const endGamePlayerLost = (
+  dispatch,
+  gameLogicActions,
+  playerChips,
+  currentStake
+) => {
+  dispatch(gameLogicActions.changeGamesStatus("player_lost"));
+  dispatch(gameLogicActions.changeGamesPhase("betting"));
+  dispatch(gameLogicActions.updateBtnAvailability([true, true, true]));
+  dispatch(gameLogicActions.updatePlayerChips(playerChips - currentStake));
+  dispatch(gameLogicActions.changeCurrentStake(null));
+};
+
+export const endGameTiedRound = (
+  dispatch,
+  gameLogicActions,
+  playerChips,
+  currentStake
+) => {
+  dispatch(gameLogicActions.changeGamesStatus("tied_round"));
+  dispatch(gameLogicActions.changeGamesPhase("betting"));
+  dispatch(gameLogicActions.updateBtnAvailability([true, true, true]));
+  dispatch(gameLogicActions.updatePlayerChips(playerChips + currentStake));
+  dispatch(gameLogicActions.changeCurrentStake(null));
+};
+
+export const gameNotDecided = (dispatch, gameLogicActions) => {
+  dispatch(gameLogicActions.changeGamesPhase("ongoing"));
+  dispatch(gameLogicActions.changeGamesStatus("draw_or_stand"));
+  dispatch(gameLogicActions.updateBtnAvailability([true, false, false]));
+};
+
+export const dealerGameWhenPlayerHasBlackjack = (
+  dealerSum,
+  dealerCards,
+  dispatch,
+  gameLogicActions,
+  playerChips,
+  currentStake,
+  wasDealerAceChangeDone,
+  generateRandomCard,
+  calcCardsSum,
+  endGameTiedRound,
+  endGamePlayerWon,
+  changeAceValue
+) => {
+  // Dealer gets cards until the dealer sum is no longer less than 17
+  while (dealerSum < 17) {
+    const newCardDealer = generateRandomCard();
+    dealerCards.push(newCardDealer);
+    dealerSum = calcCardsSum(dealerCards);
+  }
+
+  // Reevaluate the dealer sum, after new cards got
+  // Check if dealer has blackjack
+  if (dealerSum === 21) {
+    endGameTiedRound(dispatch, gameLogicActions, playerChips, currentStake);
+  } else if (dealerSum > 21) {
+    if (wasDealerAceChangeDone) {
+      endGamePlayerWon(dispatch, gameLogicActions, playerChips, currentStake);
+    } else {
+      dealerCards = changeAceValue(dealerCards);
+      dealerSum = calcCardsSum(dealerCards);
+
+      // Dealer gets new cards, if needed, after the ace adjustment
+      while (dealerSum < 17) {
+        const newCardDealer = generateRandomCard();
+        dealerCards.push(newCardDealer);
+        dealerSum = calcCardsSum(dealerCards);
+      }
+
+      if (dealerSum === 21) {
+        endGameTiedRound(dispatch, gameLogicActions, playerChips, currentStake);
+      } else {
+        endGamePlayerWon(dispatch, gameLogicActions, playerChips, currentStake);
+      }
+    }
+  } else {
+    // Case when dealer cards sum is between 17 and 21
+    endGamePlayerWon(dispatch, gameLogicActions, playerChips, currentStake);
   }
 };
