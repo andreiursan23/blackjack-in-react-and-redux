@@ -1,61 +1,68 @@
 export const standRoundPhase = (
-  inputDealerCards,
-  dealerSum,
-  wasDealerAceChangeDone,
-  playerSum,
-  playerChips,
-  currentStake,
-  dispatch,
-  gameLogicActions,
-  dealerGameWhenPlayerStandsRound,
-  endGamePlayerWon,
-  endGameTiedRound,
-  endGamePlayerLost,
+  currentGameStates,
   generateRandomCard,
   calcCardsSum,
   changeAceValue
 ) => {
-  // 1. Dealer-ul trebuie sa isi joace mana, dar fara a fi concluzionata runda
-  //    1.1. Daca suma este mai mare decat 17, returnam suma cartilor.
-  //    1.2. Daca suma este mai mica decat 17, atunci trebuie sa traga carti pana cand depaseste 17
-  //    1.3. Daca e mai mica sau egala decat 21, atunci returnam suma cartilor
-  //    1.4. Daca depaseste 21, verificam daca a fost facuta schimbarea valorii asului
-  //    1.5. Daca a fost facuta, returnam suma cartilor.
-  //    1.6. Daca nu a fost facuta, o facem acum si revenim la punctul 1.1
-  // 2. Daca dealer-ul a depasit 21, atunci automat jucatorul castiga runda
-  // 3. In caz contrar punctului 3, trebuie calculata si salvata suma cartilor jucatorului
-  // 4. Daca cele doua sume sunt EGALE, este egalitate
-  // 5. Daca suma jucatorului este mai MARE decat a dealer-ului, jucatorul a castigat
-  // 6. Daca suma jucatorului este mai MICA decat a dealer-ului, jucatorul a pierdut
-  // 7. Resetata starea jocului inapoi la Betting phase
-  let dealerCards = [...inputDealerCards];
+  let result = {
+    playerCards: [],
+    playerSum: null,
+    wasPlayerAceChangeDone: false,
+    dealerCards: [],
+    dealerSum: null,
+    wasDealerAceChangeDone: false,
+    playerWon: false,
+    playerLost: false,
+    gameTied: false,
+    gamePhase: "betting",
+  };
 
-  [dealerCards, dealerSum] = dealerGameWhenPlayerStandsRound(
-    dealerSum,
-    dealerCards,
-    wasDealerAceChangeDone,
-    generateRandomCard,
-    calcCardsSum,
-    changeAceValue
-  );
+  result.playerCards = [...currentGameStates.player.cards];
+  result.playerSum = [currentGameStates.player.sum];
+  result.wasPlayerAceChangeDone = currentGameStates.player.wasAceChangeDone;
+  result.dealerCards = [...currentGameStates.dealer.cards];
+  result.dealerSum = [currentGameStates.dealer.sum];
+  result.wasDealerAceChangeDone = currentGameStates.dealer.wasAceChangeDone;
+  result.gamePhase = currentGameStates.game.phase;
 
-  if (dealerSum > 21) {
-    endGamePlayerWon(dispatch, gameLogicActions, playerChips, currentStake);
-  } else {
-    if (dealerSum === playerSum) {
-      endGameTiedRound(dispatch, gameLogicActions, playerChips, currentStake);
-    } else if (dealerSum < playerSum) {
-      endGamePlayerWon(dispatch, gameLogicActions, playerChips, currentStake);
-    } else {
-      endGamePlayerLost(dispatch, gameLogicActions, playerChips, currentStake);
+  // Dealer gets cards until the dealer sum is no longer less than 17
+  while (result.dealerSum < 17) {
+    const newCardDealer = generateRandomCard();
+    result.dealerCards = [...result.dealerCards, newCardDealer];
+    result.dealerSum = calcCardsSum(result.dealerCards);
+  }
+
+  // If dealer sum is over 21 after new cards drawn, check if there is an Ace
+  if (result.dealerSum > 21) {
+    // Change ace value if dealer sum is more than 21
+    if (!result.wasDealerAceChangeDone) {
+      if (result.dealerCards.includes(11)) {
+        // Ace adjustment for dealer cards
+        result.dealerCards = changeAceValue(result.dealerCards);
+        result.dealerSum = calcCardsSum(result.dealerCards);
+        result.wasDealerAceChangeDone = true;
+
+        // Dealer gets new cards, if needed, after the ace adjustment
+        while (result.dealerSum < 17) {
+          const newCardDealer = generateRandomCard();
+          result.dealerCards = [...result.dealerCards, newCardDealer];
+          result.dealerSum = calcCardsSum(result.dealerCards);
+        }
+      }
     }
   }
 
-  // Save all needed values to Redux store
-  // Player and dealer cards
-  dispatch(gameLogicActions.updateDealerCards(dealerCards));
-  // Player and dealer cards sum
-  dispatch(gameLogicActions.updateDealerSum(dealerCards));
-  // Player and dealer was ace value changed states
-  dispatch(gameLogicActions.updateDealerWasAceChangeDone(false));
+  if (result.dealerSum > 21) {
+    result.playerWon = true;
+  } else {
+    if (result.dealerSum === result.playerSum) {
+      result.gameTied = true;
+    } else if (result.dealerSum < result.playerSum) {
+      result.playerWon = true;
+    } else {
+      result.playerLost = true;
+    }
+  }
+
+  return result;
 };

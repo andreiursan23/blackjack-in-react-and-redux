@@ -1,100 +1,70 @@
 export const newCardPhase = (
-  dispatch,
-  gameLogicActions,
+  currentGameStates,
   generateRandomCard,
   calcCardsSum,
-  dealerGameWhenPlayerHasBlackjack,
-  endGameTiedRound,
-  endGamePlayerWon,
-  gameNotDecided,
   changeAceValue,
-  endGamePlayerLost,
-  inputPlayerCards,
-  playerSum,
-  inputDealerCards,
-  dealerSum,
-  wasDealerAceChangeDone,
-  wasPlayerAceChangeDone,
-  currentStake,
-  playerChips
+  dealerGameWhenPlayerHasBlackjack
 ) => {
-  let playerCards = [...inputPlayerCards];
-  let dealerCards = [...inputDealerCards];
+  let result = {
+    playerCards: [],
+    playerSum: null,
+    wasPlayerAceChangeDone: false,
+    dealerCards: [],
+    dealerSum: null,
+    wasDealerAceChangeDone: false,
+    playerWon: false,
+    playerLost: false,
+    gameTied: false,
+    gamePhase: "betting",
+  };
+
+  result.playerCards = [...currentGameStates.player.cards];
+  result.playerSum = [currentGameStates.player.sum];
+  result.wasPlayerAceChangeDone = currentGameStates.player.wasAceChangeDone;
+  result.dealerCards = [...currentGameStates.dealer.cards];
+  result.dealerSum = [currentGameStates.dealer.sum];
+  result.wasDealerAceChangeDone = currentGameStates.dealer.wasAceChangeDone;
+  result.gamePhase = currentGameStates.game.phase;
 
   const newCardPlayer = generateRandomCard();
-  playerCards.push(newCardPlayer);
-  playerSum = calcCardsSum(playerCards);
+  result.playerCards = [...result.playerCards, newCardPlayer];
+  result.playerSum = calcCardsSum(result.playerCards);
 
-  if (playerSum === 21) {
-    dealerGameWhenPlayerHasBlackjack(
-      dealerSum,
-      dealerCards,
-      dispatch,
-      gameLogicActions,
-      playerChips,
-      currentStake,
-      wasDealerAceChangeDone,
-      wasPlayerAceChangeDone,
+  if (result.playerSum === 21) {
+    result = dealerGameWhenPlayerHasBlackjack(
+      result,
       generateRandomCard,
       calcCardsSum,
-      endGameTiedRound,
-      endGamePlayerWon,
       changeAceValue
     );
-  } else if (playerSum > 21) {
+  } else if (result.playerSum > 21) {
     // Case below: player cards sum is more than 21
-    if (wasPlayerAceChangeDone) {
+    if (result.wasPlayerAceChangeDone) {
       // Player lost steps to be added here
-      endGamePlayerLost(dispatch, gameLogicActions, playerChips, currentStake);
+      result.playerLost = true;
     } else {
       // See if player has an ace in hand
-      if (playerCards.includes(11)) {
+      if (result.playerCards.includes(11)) {
         // Change the value of the ace
-        playerCards = changeAceValue(playerCards);
-        playerSum = calcCardsSum(playerCards);
-        wasPlayerAceChangeDone = true;
+        result.playerCards = changeAceValue(result.playerCards);
+        result.playerSum = calcCardsSum(result.playerCards);
+        result.wasPlayerAceChangeDone = true;
 
-        // Check if player now has blackjack
-        if (playerSum === 21) {
-          endGamePlayerWon(
-            dispatch,
-            gameLogicActions,
-            playerChips,
-            currentStake
+        if (result.playerSum === 21) {
+          // Check if player now has blackjack
+          result = dealerGameWhenPlayerHasBlackjack(
+            result,
+            generateRandomCard,
+            calcCardsSum,
+            changeAceValue
           );
-        } else {
-          // Steps when neither side has blackjack
-          gameNotDecided(dispatch, gameLogicActions);
         }
-
-        // Case below: player does not have ace in hand and player cards sum is more than 21
       } else {
-        // Player lost steps to be added here
-        endGamePlayerLost(
-          dispatch,
-          gameLogicActions,
-          playerChips,
-          currentStake
-        );
+        // Case below: player does not have ace in hand and player cards sum is more than 21
+        result.playerLost = true;
       }
     }
-  } else {
-    // Steps when neither side has blackjack
-    gameNotDecided(dispatch, gameLogicActions);
   }
 
-  // Save all needed values to Redux store
-  // Player and dealer cards
-  dispatch(gameLogicActions.updatePlayerCards(playerCards));
-  dispatch(gameLogicActions.updateDealerCards(dealerCards));
-  // Player and dealer cards sum
-  dispatch(gameLogicActions.updatePlayerSum(playerCards));
-  dispatch(gameLogicActions.updateDealerSum(dealerCards));
-  // Player and dealer was ace value changed states
-  dispatch(
-    gameLogicActions.updatePlayerWasAceChangeDone(wasPlayerAceChangeDone)
-  );
-  dispatch(
-    gameLogicActions.updateDealerWasAceChangeDone(wasDealerAceChangeDone)
-  );
+  return result;
 };

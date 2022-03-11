@@ -1,55 +1,56 @@
+// React imports
 import React from "react";
-
+// Redux imports
 import { useSelector, useDispatch } from "react-redux";
 import { gameLogicActions } from "../../store/game-logic/game-logic-slice";
-
+// Helper functions imports
 import { standRoundPhase } from "../../utils/stand-round/standRoundPhase";
 import {
-  dealerGameWhenPlayerStandsRound,
-  endGamePlayerWon,
-  endGameTiedRound,
-  endGamePlayerLost,
   generateRandomCard,
   calcCardsSum,
   changeAceValue,
 } from "../../utils/helperFunctions";
-
+// Components imports
 import PlayerControlsBtn from "../../ui/PlayerControlsBtn/PlayerControlsBtn";
 
+// ---- Actual component ----
 function StandRound() {
   const dispatch = useDispatch();
   const isStandRoundBtnDisabled = useSelector(
     (state) => state.gameLogic.game.isStandRoundBtnDisabled
   );
-  const currentStake = useSelector(
-    (state) => state.gameLogic.game.currentStake
-  );
-  const playerChips = useSelector((state) => state.gameLogic.player.chips);
-  let dealerCards = useSelector((state) => state.gameLogic.dealer.cards);
-  let playerSum = useSelector((state) => state.gameLogic.player.sum);
-  let dealerSum = useSelector((state) => state.gameLogic.dealer.sum);
-  let wasDealerAceChangeDone = useSelector(
-    (state) => state.gameLogic.dealer.wasAceChangeDone
-  );
+  const currentGameStates = useSelector((state) => state.gameLogic);
 
   const handleStandRound = () => {
-    standRoundPhase(
-      dealerCards,
-      dealerSum,
-      wasDealerAceChangeDone,
-      playerSum,
-      playerChips,
-      currentStake,
-      dispatch,
-      gameLogicActions,
-      dealerGameWhenPlayerStandsRound,
-      endGamePlayerWon,
-      endGameTiedRound,
-      endGamePlayerLost,
+    const result = standRoundPhase(
+      currentGameStates,
       generateRandomCard,
       calcCardsSum,
       changeAceValue
     );
+
+    // Render game with calculated results
+    dispatch(
+      gameLogicActions.renderGame({
+        playerCards: result.playerCards,
+        playerSum: result.playerSum,
+        dealerCards: result.dealerCards,
+        dealerSum: result.dealerSum,
+        wasPlayerAceChangeDone: result.wasPlayerAceChangeDone,
+        wasDealerAceChangeDone: result.wasDealerAceChangeDone,
+      })
+    );
+
+    // Update game conclusion
+    if (result.gameTied) {
+      return dispatch(gameLogicActions.endGameTiedRound());
+    }
+    if (result.playerWon) {
+      return dispatch(gameLogicActions.endGamePlayerWon());
+    }
+    if (result.playerLost) {
+      return dispatch(gameLogicActions.endGamePlayerLost());
+    }
   };
 
   return (

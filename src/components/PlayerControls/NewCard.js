@@ -1,63 +1,58 @@
+// React imports
 import React from "react";
-
+// Redux imports
 import { useSelector, useDispatch } from "react-redux";
 import { gameLogicActions } from "../../store/game-logic/game-logic-slice";
-
+// Helper functions imports
 import { newCardPhase } from "../../utils/new-card/newCardPhase";
 import {
   generateRandomCard,
   calcCardsSum,
-  dealerGameWhenPlayerHasBlackjack,
-  endGameTiedRound,
-  endGamePlayerWon,
-  gameNotDecided,
   changeAceValue,
-  endGamePlayerLost,
+  dealerGameWhenPlayerHasBlackjack,
 } from "../../utils/helperFunctions";
-
+// Components imports
 import PlayerControlsBtn from "../../ui/PlayerControlsBtn/PlayerControlsBtn";
 
+// ---- Actual component ----
 function NewCard() {
   const dispatch = useDispatch();
   const isNewCardBtnDisabled = useSelector(
     (state) => state.gameLogic.game.isNewCardBtnDisabled
   );
-  const currentStake = useSelector(
-    (state) => state.gameLogic.game.currentStake
-  );
-  const playerChips = useSelector((state) => state.gameLogic.player.chips);
-  let playerCards = useSelector((state) => state.gameLogic.player.cards);
-  let dealerCards = useSelector((state) => state.gameLogic.dealer.cards);
-  let playerSum = useSelector((state) => state.gameLogic.player.sum);
-  let dealerSum = useSelector((state) => state.gameLogic.dealer.sum);
-  let wasPlayerAceChangeDone = useSelector(
-    (state) => state.gameLogic.player.wasAceChangeDone
-  );
-  let wasDealerAceChangeDone = useSelector(
-    (state) => state.gameLogic.dealer.wasAceChangeDone
-  );
+  const currentGameStates = useSelector((state) => state.gameLogic);
 
   const handleNewCard = () => {
-    newCardPhase(
-      dispatch,
-      gameLogicActions,
+    const result = newCardPhase(
+      currentGameStates,
       generateRandomCard,
       calcCardsSum,
-      dealerGameWhenPlayerHasBlackjack,
-      endGameTiedRound,
-      endGamePlayerWon,
-      gameNotDecided,
       changeAceValue,
-      endGamePlayerLost,
-      playerCards,
-      playerSum,
-      dealerCards,
-      dealerSum,
-      wasDealerAceChangeDone,
-      wasPlayerAceChangeDone,
-      currentStake,
-      playerChips
+      dealerGameWhenPlayerHasBlackjack
     );
+
+    // Render game with calculated results
+    dispatch(
+      gameLogicActions.renderGame({
+        playerCards: result.playerCards,
+        playerSum: result.playerSum,
+        dealerCards: result.dealerCards,
+        dealerSum: result.dealerSum,
+        wasPlayerAceChangeDone: result.wasPlayerAceChangeDone,
+        wasDealerAceChangeDone: result.wasDealerAceChangeDone,
+      })
+    );
+
+    // Update game conclusion
+    if (result.gameTied) {
+      return dispatch(gameLogicActions.endGameTiedRound());
+    }
+    if (result.playerWon) {
+      return dispatch(gameLogicActions.endGamePlayerWonBlackjack());
+    }
+    if (result.playerLost) {
+      return dispatch(gameLogicActions.endGamePlayerLost());
+    }
   };
 
   return (

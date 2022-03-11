@@ -27,6 +27,7 @@ const gameLogicSlice = createSlice({
   name: "gameLogic",
   initialState: initialState,
   reducers: {
+    // TO DO: Check what reducers need to be deleted
     // Game reducers
     changeGamesStatus(state, action) {
       switch (action.payload) {
@@ -137,6 +138,62 @@ const gameLogicSlice = createSlice({
     },
     updateDealerWasAceChangeDone(state, action) {
       state.dealer.wasAceChangeDone = action.payload;
+    },
+
+    // Trimmed down reducers specific for game:
+    renderGame(state, action) {
+      state.player.cards = action.payload.playerCards;
+      state.player.sum = action.payload.playerSum;
+      state.dealer.cards = action.payload.dealerCards;
+      state.dealer.sum = action.payload.dealerSum;
+      state.player.wasAceChangeDone = action.payload.wasPlayerAceChangeDone;
+      state.dealer.wasAceChangeDone = action.payload.wasDealerAceChangeDone;
+    },
+
+    endGamePlayerWonBlackjack(state) {
+      state.game.statusMsg = gameMessages.playerWon.blackjack;
+      state.game.phase = "betting";
+      state.game.isStartGameBtnDisabled = true;
+      state.game.isNewCardBtnDisabled = true;
+      state.game.isStandRoundBtnDisabled = true;
+      state.player.chips = state.player.chips + 2 * state.game.currentStake;
+      state.game.currentStake = 0;
+    },
+
+    endGamePlayerWon(state) {
+      state.game.statusMsg = gameMessages.playerWon.normal;
+      state.game.phase = "betting";
+      state.game.isStartGameBtnDisabled = true;
+      state.game.isNewCardBtnDisabled = true;
+      state.game.isStandRoundBtnDisabled = true;
+      state.player.chips = state.player.chips + 2 * state.game.currentStake;
+      state.game.currentStake = null;
+    },
+
+    endGamePlayerLost(state) {
+      state.game.statusMsg = gameMessages.playerLost;
+      state.game.phase = "betting";
+      state.game.isStartGameBtnDisabled = true;
+      state.game.isNewCardBtnDisabled = true;
+      state.game.isStandRoundBtnDisabled = true;
+      state.game.currentStake = null;
+    },
+
+    endGameTiedRound(state) {
+      state.game.statusMsg = gameMessages.tiedRound;
+      state.game.phase = "betting";
+      state.game.isStartGameBtnDisabled = true;
+      state.game.isNewCardBtnDisabled = true;
+      state.game.isStandRoundBtnDisabled = true;
+      state.player.chips = state.player.chips + state.game.currentStake;
+      state.game.currentStake = null;
+    },
+    gameNotDecided(state) {
+      state.game.statusMsg = gameMessages.drawOrStand;
+      state.game.phase = "ongoing";
+      state.game.isStartGameBtnDisabled = true;
+      state.game.isNewCardBtnDisabled = false;
+      state.game.isStandRoundBtnDisabled = false;
     },
   },
 });

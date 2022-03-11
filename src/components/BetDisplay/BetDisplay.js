@@ -15,6 +15,7 @@ function BetDisplay() {
   const [selectedBtn, setSelectedBtn] = useState(null);
 
   const selectBetStake = (value) => {
+    // TO DO: Below has to change to a single reducer
     // Reset game if a previous game was played
     dispatch(gameLogicActions.updatePlayerCards(null));
     dispatch(gameLogicActions.updateDealerCards(null));
