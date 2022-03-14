@@ -27,120 +27,23 @@ const gameLogicSlice = createSlice({
   name: "gameLogic",
   initialState: initialState,
   reducers: {
-    // TO DO: Check what reducers need to be deleted
-    // Game reducers
-    changeGamesStatus(state, action) {
-      switch (action.payload) {
-        case "welcome":
-          state.game.statusMsg = gameMessages.welcome;
-          break;
-        case "player_won_blackjack":
-          state.game.statusMsg = gameMessages.playerWon.blackjack;
-          break;
-        case "player_won_normal":
-          state.game.statusMsg = gameMessages.playerWon.normal;
-          break;
-        case "player_lost":
-          state.game.statusMsg = gameMessages.playerLost;
-          break;
-        case "tied_round":
-          state.game.statusMsg = gameMessages.tiedRound;
-          break;
-        case "draw_or_stand":
-          state.game.statusMsg = gameMessages.drawOrStand;
-          break;
-        default:
-          break;
-      }
-    },
-    changeGamesPhase(state, action) {
-      state.game.phase = action.payload;
-    },
-    changeCurrentStake(state, action) {
+    selectBetValueSteps(state, action) {
+      // Reset game after the previous game was played
+      // state.player.cards = null;
+      // state.player.sum = null;
+      // state.dealer.cards = null;
+      // state.dealer.sum = null;
+
+      // Start new bet stake selection
       state.game.currentStake = action.payload;
-    },
-    updateBtnAvailability(state, action) {
-      state.game.isStartGameBtnDisabled = action.payload[0];
-      state.game.isNewCardBtnDisabled = action.payload[1];
-      state.game.isStandRoundBtnDisabled = action.payload[2];
+      state.game.phase = "ongoing";
+
+      state.player.chips -= action.payload;
+      state.game.isStartGameBtnDisabled = false;
+      state.game.isNewCardBtnDisabled = true;
+      state.game.isStandRoundBtnDisabled = true;
     },
 
-    // Player reducers
-    updatePlayerCards(state, action) {
-      if (!action.payload) {
-        // to initialize new game
-        state.player.cards = [];
-      } else {
-        // to update cards during game
-        state.player.cards = [];
-        action.payload.forEach((card) => {
-          state.player.cards.push(card);
-        });
-      }
-    },
-    updatePlayerSum(state, action) {
-      if (!action.payload) {
-        state.player.sum = null;
-      } else {
-        let sum = 0;
-
-        action.payload.forEach((card) => {
-          sum += card;
-        });
-
-        state.player.sum = sum;
-      }
-    },
-    updatePlayerChips(state, action) {
-      state.player.chips = action.payload;
-    },
-    updatePlayerIsAlive(state, action) {
-      state.player.isAlive = action.payload;
-    },
-    updatePlayerHasWon(state, action) {
-      state.player.hasWon = action.payload;
-    },
-    updatePlayerWasAceChangeDone(state, action) {
-      state.player.wasAceChangeDone = action.payload;
-    },
-
-    // Dealer reducers
-    updateDealerCards(state, action) {
-      if (!action.payload) {
-        // to initialize new game
-        state.dealer.cards = [];
-      } else {
-        // to update cards during game
-        state.dealer.cards = [];
-        action.payload.forEach((card) => {
-          state.dealer.cards.push(card);
-        });
-      }
-    },
-    updateDealerSum(state, action) {
-      if (!action.payload) {
-        state.dealer.sum = null;
-      } else {
-        let sum = 0;
-
-        action.payload.forEach((card) => {
-          sum += card;
-        });
-
-        state.dealer.sum = sum;
-      }
-    },
-    updateDealerIsAlive(state, action) {
-      state.dealer.isAlive = action.payload;
-    },
-    updateDealerHasWon(state, action) {
-      state.dealer.hasWon = action.payload;
-    },
-    updateDealerWasAceChangeDone(state, action) {
-      state.dealer.wasAceChangeDone = action.payload;
-    },
-
-    // Trimmed down reducers specific for game:
     renderGame(state, action) {
       state.player.cards = action.payload.playerCards;
       state.player.sum = action.payload.playerSum;

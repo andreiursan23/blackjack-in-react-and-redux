@@ -1,4 +1,5 @@
-.button {
+.button,
+.button_selected {
   display: block;
   width: 15%;
   margin: 0.75rem auto;
@@ -10,33 +11,47 @@
   font-weight: bold;
 }
 
-.button:nth-of-type(1) {
+.button:nth-of-type(1),
+.button_selected:nth-of-type(1) {
   background: var(--btn-1usd);
 }
 
-.button:nth-of-type(2) {
+.button:nth-of-type(2),
+.button_selected:nth-of-type(2) {
   background: var(--btn-5usd);
 }
 
-.button:nth-of-type(3) {
+.button:nth-of-type(3),
+.button_selected:nth-of-type(3) {
   background: var(--btn-20usd);
 }
 
-.button:nth-of-type(4) {
+.button:nth-of-type(4),
+.button_selected:nth-of-type(4) {
   background: var(--btn-50usd);
 }
 
-.button:nth-of-type(5) {
+.button:nth-of-type(5),
+.button_selected:nth-of-type(5) {
   background: var(--btn-100usd);
-}
-
-.button:hover {
-  transform: scale(1.04);
-  cursor: pointer;
 }
 
 .button:disabled {
   background: var(--btn-disabled);
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.button:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.button[disabled]:hover {
+  transform: none;
+  cursor: not-allowed;
+}
+
+.button_selected:disabled {
+  cursor: not-allowed;
 }

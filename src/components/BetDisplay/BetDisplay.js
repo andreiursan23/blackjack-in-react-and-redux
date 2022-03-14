@@ -10,25 +10,25 @@ import BetSumBtn from "../../ui/BetSumBtn/BetSumBtn";
 
 function BetDisplay() {
   const dispatch = useDispatch();
-  const playerChips = useSelector((state) => state.gameLogic.player.chips);
 
   const [selectedBtn, setSelectedBtn] = useState(null);
 
   const selectBetStake = (value) => {
     // TO DO: Below has to change to a single reducer
     // Reset game if a previous game was played
-    dispatch(gameLogicActions.updatePlayerCards(null));
-    dispatch(gameLogicActions.updateDealerCards(null));
-    dispatch(gameLogicActions.updatePlayerSum(null));
-    dispatch(gameLogicActions.updateDealerSum(null));
+    // dispatch(gameLogicActions.updatePlayerCards(null));
+    // dispatch(gameLogicActions.updateDealerCards(null));
+    // dispatch(gameLogicActions.updatePlayerSum(null));
+    // dispatch(gameLogicActions.updateDealerSum(null));
 
-    // Start new bet stake selection
-    dispatch(gameLogicActions.changeCurrentStake(value));
-    dispatch(gameLogicActions.changeGamesPhase("ongoing"));
+    // // Start new bet stake selection
+    // dispatch(gameLogicActions.changeCurrentStake(value));
+    // dispatch(gameLogicActions.changeGamesPhase("ongoing"));
+    // dispatch(gameLogicActions.updatePlayerChips(playerChips - value));
+    // dispatch(gameLogicActions.updateBtnAvailability([false, true, true]));
+
+    dispatch(gameLogicActions.selectBetValueSteps(value));
     setSelectedBtn(value);
-
-    dispatch(gameLogicActions.updatePlayerChips(playerChips - value));
-    dispatch(gameLogicActions.updateBtnAvailability([false, true, true]));
   };
 
   return (

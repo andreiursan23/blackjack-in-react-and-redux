@@ -65,6 +65,22 @@ export const trackAceValueChangeWhenBothCardsAreAces = (card1, card2) => {
   }
 };
 
+export const displayAllCards = (inputCards) => {
+  let formattedCards = "";
+  inputCards.forEach((card) => (formattedCards += `${card} `));
+  return formattedCards;
+};
+
+export const displaySecondCardOnly = (inputCards, inputSide) => {
+  let formattedCards = "";
+  if (inputSide === "Dealer") {
+    inputCards.slice(1).forEach((card) => (formattedCards += `${card} `));
+    return formattedCards;
+  } else {
+    return inputCards;
+  }
+};
+
 export const dealerGameWhenPlayerHasBlackjack = (
   currentParams,
   generateRandomCard,

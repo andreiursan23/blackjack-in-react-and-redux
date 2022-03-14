@@ -9,10 +9,8 @@ function BetSumBtn({ value, selectBetStake, selectedBtn }) {
 
   return (
     <button
-      className={styles.button}
-      disabled={
-        gamePhase === "betting" ? false : selectedBtn !== value ? true : false
-      }
+      className={selectedBtn !== value ? styles.button : styles.button_selected}
+      disabled={gamePhase === "betting" ? false : true}
       onClick={() => selectBetStake(value)}
     >
       Bet ${value}

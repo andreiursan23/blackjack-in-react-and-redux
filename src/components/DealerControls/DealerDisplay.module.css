@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  border-bottom: var(--box-border) 3px solid;
+}
+
+.cards_container {
+  width: 70%;
+  border-right: var(--box-border) 3px solid;
+}
+
+.cards {
+  font-size: 1.6875rem;
+  text-align: center;
+  padding: 1rem 0 0 0;
+  color: var(--subtitle);
+}
+
+.cards_values {
+  height: 3.6875rem;
+  font-size: 1.6875rem;
+  text-align: center;
+  padding: 1rem 0;
+  color: var(--text);
+}
+
+.sum_container {
+  width: 30%;
+}
