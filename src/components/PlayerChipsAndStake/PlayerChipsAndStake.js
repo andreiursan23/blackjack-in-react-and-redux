@@ -1,9 +1,11 @@
+// React imports
 import React from "react";
-
+// Redux imports
 import { useSelector } from "react-redux";
-
+// Styles imports
 import styles from "./PlayerChipsAndStake.module.css";
 
+// ---- Actual component ----
 function PlayerChipsAndStake() {
   const playerChips = useSelector((state) => state.gameLogic.player.chips);
   const currentStake = useSelector(

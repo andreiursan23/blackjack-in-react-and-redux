@@ -1,9 +1,11 @@
+// React imports
 import React from "react";
-
+// Redux imports
 import { useSelector } from "react-redux";
-
+// Styles imports
 import styles from "./GameStatus.module.css";
 
+// ---- Actual component ----
 function GameStatus() {
   const gameStatusMsg = useSelector((state) => state.gameLogic.game.statusMsg);
 

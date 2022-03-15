@@ -1,5 +1,6 @@
 export const gameMessages = {
-  welcome: "Want to play a round? ♠ Place your bet and start game",
+  welcome: "Want to play a round? 🎱 Place your bet and start game.",
+  betting: "Bet placed, please start round. 🍀",
   playerWon: {
     blackjack: "Blackjack! You won this round! 🥇 Place new bet?",
     normal: "You won this round! 🥇 Place new bet?",

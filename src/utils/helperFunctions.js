@@ -71,15 +71,78 @@ export const displayAllCards = (inputCards) => {
   return formattedCards;
 };
 
-export const displaySecondCardOnly = (inputCards, inputSide) => {
-  let formattedCards = "";
-  if (inputSide === "Dealer") {
-    inputCards.slice(1).forEach((card) => (formattedCards += `${card} `));
-    return formattedCards;
-  } else {
-    return inputCards;
+export const displayPlayerCards = (inputCards, gamePhase) => {
+  let cardsDisplayed = "";
+
+  switch (gamePhase) {
+    case "betting":
+      return null;
+    case "ongoing":
+      inputCards.forEach((card) => (cardsDisplayed += `${card} `));
+      return cardsDisplayed;
+    case "conclusion":
+      inputCards.forEach((card) => (cardsDisplayed += `${card} `));
+      return cardsDisplayed;
+    default:
+      console.log("Something went wrong");
+      break;
   }
 };
+
+export const displayPlayerSum = (inputSum, gamePhase) => {
+  switch (gamePhase) {
+    case "betting":
+      return null;
+    case "ongoing":
+      return inputSum;
+    case "conclusion":
+      return inputSum;
+    default:
+      console.log("Something went wrong");
+      break;
+  }
+};
+
+export const displayDealerCards = (inputCards, gamePhase) => {
+  let cardsDisplayed = "";
+
+  switch (gamePhase) {
+    case "betting":
+      return null;
+    case "ongoing":
+      return inputCards[0];
+    case "conclusion":
+      inputCards.forEach((card) => (cardsDisplayed += `${card} `));
+      return cardsDisplayed;
+    default:
+      console.log("Something went wrong");
+      break;
+  }
+};
+
+export const displayDealerSum = (inputSum, inputCards, gamePhase) => {
+  switch (gamePhase) {
+    case "betting":
+      return null;
+    case "ongoing":
+      return inputCards[0];
+    case "conclusion":
+      return inputSum;
+    default:
+      console.log("Something went wrong");
+      break;
+  }
+};
+
+// export const displaySecondCardOnly = (inputCards, inputSide) => {
+//   let formattedCards = "";
+//   if (inputSide === "Dealer") {
+//     inputCards.slice(1).forEach((card) => (formattedCards += `${card} `));
+//     return formattedCards;
+//   } else {
+//     return inputCards;
+//   }
+// };
 
 export const dealerGameWhenPlayerHasBlackjack = (
   currentParams,

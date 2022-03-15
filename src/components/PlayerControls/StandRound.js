@@ -22,6 +22,7 @@ function StandRound() {
   const currentGameStates = useSelector((state) => state.gameLogic);
 
   const handleStandRound = () => {
+    // Get result after stand round phase calculations are done
     const result = standRoundPhase(
       currentGameStates,
       generateRandomCard,

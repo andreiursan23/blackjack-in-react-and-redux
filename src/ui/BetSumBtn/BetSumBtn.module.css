@@ -42,16 +42,18 @@
   opacity: 0.7;
 }
 
-.button:hover {
+.button_selected:disabled {
+  cursor: not-allowed;
+}
+
+.button:hover,
+.button_selected:hover {
   transform: scale(1.05);
   cursor: pointer;
 }
 
-.button[disabled]:hover {
+.button[disabled]:hover,
+.button_selected[disabled]:hover {
   transform: none;
-  cursor: not-allowed;
-}
-
-.button_selected:disabled {
   cursor: not-allowed;
 }

@@ -23,6 +23,7 @@ function NewCard() {
   const currentGameStates = useSelector((state) => state.gameLogic);
 
   const handleNewCard = () => {
+    // Get result after new card phase calculations are done
     const result = newCardPhase(
       currentGameStates,
       generateRandomCard,

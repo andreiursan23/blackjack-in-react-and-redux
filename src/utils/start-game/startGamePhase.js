@@ -44,7 +44,7 @@ export const startGamePhase = (
     card1Dealer = 1;
   }
 
-  // Create the two array for cards
+  // Create the two arrays of cards
   result.playerCards = [card1Player, card2Player];
   result.dealerCards = [card1Dealer, card2Dealer];
 
@@ -54,6 +54,7 @@ export const startGamePhase = (
   const hasPlayerBlackjack = evaluateGameBlackjack(result.playerSum);
   const hasDealerBlackjack = evaluateGameBlackjack(result.dealerSum);
 
+  // Check each possible case:
   // 1. Both sides have blackjack
   if (hasPlayerBlackjack && hasDealerBlackjack) {
     result.gameTied = true;

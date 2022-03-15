@@ -4,7 +4,7 @@ import { gameMessages } from "../../database/gameMessages";
 const initialState = {
   game: {
     statusMsg: gameMessages.welcome,
-    phase: "betting",
+    phase: "conclusion",
     currentStake: null,
     isStartGameBtnDisabled: true,
     isNewCardBtnDisabled: true,
@@ -13,7 +13,7 @@ const initialState = {
   player: {
     cards: [],
     sum: null,
-    chips: 1000,
+    chips: 3000,
     wasAceChangeDone: false,
   },
   dealer: {
@@ -28,15 +28,9 @@ const gameLogicSlice = createSlice({
   initialState: initialState,
   reducers: {
     selectBetValueSteps(state, action) {
-      // Reset game after the previous game was played
-      // state.player.cards = null;
-      // state.player.sum = null;
-      // state.dealer.cards = null;
-      // state.dealer.sum = null;
-
-      // Start new bet stake selection
+      state.game.statusMsg = gameMessages.betting;
       state.game.currentStake = action.payload;
-      state.game.phase = "ongoing";
+      state.game.phase = "betting";
 
       state.player.chips -= action.payload;
       state.game.isStartGameBtnDisabled = false;
@@ -55,7 +49,7 @@ const gameLogicSlice = createSlice({
 
     endGamePlayerWonBlackjack(state) {
       state.game.statusMsg = gameMessages.playerWon.blackjack;
-      state.game.phase = "betting";
+      state.game.phase = "conclusion";
       state.game.isStartGameBtnDisabled = true;
       state.game.isNewCardBtnDisabled = true;
       state.game.isStandRoundBtnDisabled = true;
@@ -65,7 +59,7 @@ const gameLogicSlice = createSlice({
 
     endGamePlayerWon(state) {
       state.game.statusMsg = gameMessages.playerWon.normal;
-      state.game.phase = "betting";
+      state.game.phase = "conclusion";
       state.game.isStartGameBtnDisabled = true;
       state.game.isNewCardBtnDisabled = true;
       state.game.isStandRoundBtnDisabled = true;
@@ -75,7 +69,7 @@ const gameLogicSlice = createSlice({
 
     endGamePlayerLost(state) {
       state.game.statusMsg = gameMessages.playerLost;
-      state.game.phase = "betting";
+      state.game.phase = "conclusion";
       state.game.isStartGameBtnDisabled = true;
       state.game.isNewCardBtnDisabled = true;
       state.game.isStandRoundBtnDisabled = true;
@@ -84,7 +78,7 @@ const gameLogicSlice = createSlice({
 
     endGameTiedRound(state) {
       state.game.statusMsg = gameMessages.tiedRound;
-      state.game.phase = "betting";
+      state.game.phase = "conclusion";
       state.game.isStartGameBtnDisabled = true;
       state.game.isNewCardBtnDisabled = true;
       state.game.isStandRoundBtnDisabled = true;

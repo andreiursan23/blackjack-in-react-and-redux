@@ -1,12 +1,18 @@
+// React imports
 import React from "react";
-
-import styles from "./DealerDisplay.module.css";
-
+// Redux imports
 import { useSelector } from "react-redux";
+// Styles imports
+import styles from "./DealerDisplay.module.css";
+// Helper functions imports
+import {
+  displayDealerCards,
+  displayDealerSum,
+} from "../../utils/helperFunctions";
 
-import { displayAllCards } from "../../utils/helperFunctions";
-
+// ---- Actual component ----
 function DealerDisplay() {
+  const gamePhase = useSelector((state) => state.gameLogic.game.phase);
   const dealerCards = useSelector((state) => state.gameLogic.dealer.cards);
   const dealerCardsSum = useSelector((state) => state.gameLogic.dealer.sum);
 
@@ -14,11 +20,15 @@ function DealerDisplay() {
     <div className={styles.container}>
       <div className={styles.cards_container}>
         <p className={styles.cards}>Dealer's Cards:</p>
-        <p className={styles.cards_values}>{displayAllCards(dealerCards)}</p>
+        <p className={styles.cards_values}>
+          {displayDealerCards(dealerCards, gamePhase)}
+        </p>
       </div>
       <div className={styles.sum_container}>
         <p className={styles.cards}>Sum:</p>
-        <p className={styles.cards_values}>{dealerCardsSum}</p>
+        <p className={styles.cards_values}>
+          {displayDealerSum(dealerCardsSum, dealerCards, gamePhase)}
+        </p>
       </div>
     </div>
   );
