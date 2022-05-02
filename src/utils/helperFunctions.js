@@ -22,13 +22,7 @@ export const changeAceValue = (cards) => {
 };
 
 export const calcCardsSum = (cards) => {
-  let sum = 0;
-
-  cards.forEach((card) => {
-    sum += card;
-  });
-
-  return sum;
+  return cards.reduce((total, current) => total += current)
 };
 
 export const evaluateGameState = (cardsSum) => {
@@ -133,16 +127,6 @@ export const displayDealerSum = (inputSum, inputCards, gamePhase) => {
       break;
   }
 };
-
-// export const displaySecondCardOnly = (inputCards, inputSide) => {
-//   let formattedCards = "";
-//   if (inputSide === "Dealer") {
-//     inputCards.slice(1).forEach((card) => (formattedCards += `${card} `));
-//     return formattedCards;
-//   } else {
-//     return inputCards;
-//   }
-// };
 
 export const dealerGameWhenPlayerHasBlackjack = (
   currentParams,
